@@ -1,7 +1,8 @@
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_secretsmanager::{output::GetSecretValueOutput, Client};
-use run_test_async::bench;
 use serde_json::Value;
+
+pub use run_test_async::{bench, run_test_async};
 
 async fn load_url() -> Option<String> {
     let region_provider = RegionProviderChain::default_provider().or_else("ap-northeast-3");

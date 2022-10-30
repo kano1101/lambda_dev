@@ -1,19 +1,7 @@
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_secretsmanager::{output::GetSecretValueOutput, Client};
+use run_test_async::bench;
 use serde_json::Value;
-use tracing::info;
-
-async fn bench<T>(
-    message: impl Into<&str> + Send,
-    target_fn: impl std::future::Future<Output = T> + Send,
-) -> T {
-    let now = std::time::Instant::now();
-    let r = target_fn.await;
-    let duration_time = format!("{:?}", now.elapsed());
-    let message = message.into();
-    info!(duration_time, message);
-    r
-}
 
 async fn load_url() -> Option<String> {
     let region_provider = RegionProviderChain::default_provider().or_else("ap-northeast-3");
@@ -56,7 +44,6 @@ async fn load_url() -> Option<String> {
 
     Some(url)
 }
-
 async fn establish_connection() -> Option<sqlx::MySqlPool> {
     let url = load_url().await?;
 

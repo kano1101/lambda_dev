@@ -59,16 +59,12 @@ async fn establish_connection() -> Option<sqlx::MySqlPool> {
     let pool = bench("establish connection", c).await;
     Some(pool)
 }
-pub async fn establish_connection_or_get_cache() -> &'static sqlx::MySqlPool {
+pub async fn establish_connection_or_get_cache() -> Option<&'static sqlx::MySqlPool> {
     static mut POOL: Option<sqlx::MySqlPool> = None;
     unsafe {
         if POOL.is_none() {
             POOL = establish_connection().await;
         }
     }
-    let result = match unsafe { POOL.as_ref() } {
-        None => todo!(),
-        Some(pool) => pool,
-    };
-    result
+    unsafe { POOL.as_ref() }
 }

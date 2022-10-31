@@ -51,6 +51,7 @@ async fn establish_connection() -> Option<sqlx::MySqlPool> {
     let c = async {
         sqlx::mysql::MySqlPoolOptions::new()
             .max_connections(5)
+            .acquire_timeout(core::time::Duration::new(300, 0))
             .connect(&url)
             .await
             .unwrap()

@@ -2,6 +2,9 @@ use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_secretsmanager::{output::GetSecretValueOutput, Client};
 use serde_json::Value;
 
+use dotenv::dotenv;
+use std::env;
+
 pub use run_test_async::{bench, run_test_async};
 
 async fn load_url() -> Option<String> {
@@ -27,6 +30,8 @@ async fn load_url() -> Option<String> {
         None
     };
 
+    dotenv().ok();
+
     let url = if let Some(secret_info) = secret_info {
         let host: &str = &secret_info["host_proxy"].as_str().unwrap_or("localhost");
         let username: &str = &secret_info["username"].as_str().unwrap_or("root");
@@ -34,6 +39,8 @@ async fn load_url() -> Option<String> {
         let database: &str = &secret_info["dbname"].as_str().unwrap_or("test_db");
 
         format!("mysql://{}:{}@{}/{}", username, password, host, database)
+    } else if let Ok(url) = env::var("DATABASE_URL") {
+        url
     } else {
         let host: &str = "localhost";
         let username: &str = "root";
